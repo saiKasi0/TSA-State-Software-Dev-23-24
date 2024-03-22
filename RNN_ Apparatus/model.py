@@ -1,9 +1,10 @@
-# Just the model nothing else
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+
+# So far only have basic NN stuff need to implemt LSTM and add layers
 
 # Recursive Nerual Net Model
 class RNN_Model(nn.Module):
@@ -21,7 +22,7 @@ class RNN_Model(nn.Module):
             return x
 
     # Save data of training into a pth file (helpful to show training progression) : for memmory
-    def save(self, file_name='model.pth'):
+    def save(self, file_name='model.pth'): #TODO might want to add like a name for each model here
         model_folder_path = './model'
         if not os.path.exists(model_folder_path):
             os.makedirs(model_folder_path)
