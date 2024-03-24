@@ -34,25 +34,36 @@ class LSTMbyHand(L.LightningModule):
 
     # Handle LSTM Operations
     def lstm_unit(self, input_value, long_memory, short_memory):
-        # Forget Gate
+        # Forget Gate: Calculates How Much of Long Term Memory to Implement
         long_remember_percent = torch.sigmoid((short_memory * self.wlr1) + (input_value * self.wlr2) + self.blr1)
 
-        # Input Gate
+        # Input Gate: Creates New Potential Long-term Memory and Determines How Much To Remember
         potential_remember_percent = torch.sigmoid((short_memory * self.wpr1) + (input_value * self.wpr2) + self.bpr1)
         potential_memory = torch.tanh((short_memory * self.wp1) + (input_value * self.wp2) + self.bp1)
-        
-        # Output Gate
-        updated_long_memory = ((long_memory * long_remember_percent) + (potential_remember_percent * potential_memory))
-        output_percent = torch.sigmoid((short_memory * self.wo1) + (input_value * slice.wo2) + self.bo1)
 
-    # Forward pass unrolled LSTM
+        # Updates Long Term Memory
+        updated_long_memory = ((long_memory * long_remember_percent) + (potential_remember_percent * potential_memory))
+        
+        # Output Gate: Makes New Short Term Memory and Determines How Much To Remember
+        output_percent = torch.sigmoid((short_memory * self.wo1) + (input_value * slice.wo2) + self.bo1)
+        updated_short_memory =  torch.tanh(updated_long_memory) * output_percent
+
+        return ([updated_long_memory, updated_short_memory])
+
+    # Conducts Forward Pass in Unrolled LSTM
     def forward(self, input):
-        pass
+        long_memory = 0
+        short_memory = 0
+        for data in input:
+            long_memory, short_memory = self.lstm_unit(data, long_memory, short_memory)
+        return short_memory
 
     # Configures Adam Optimizer
     def configure_optimizers(self):
-        pass
+        return Adam(self.parameters)
 
     # Calculate Loss (Sum of Squared Residuals) and Log Training Progress
     def training_step(self, batch, batch_idx):
+        input_i, label_i = batch
+        output_i =  self.forward(input_i[0])
         pass
