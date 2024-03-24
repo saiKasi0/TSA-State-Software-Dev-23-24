@@ -11,7 +11,7 @@ class LSTMbyHand(L.LightningModule):
     # Create & Init Weight and Bias Tensors
     def __init__(self):
 
-        super.__init__()
+        super().__init__()
         mean  = torch.tensor(0.0)
         std =  torch.tensor(1.0)
 
@@ -45,7 +45,7 @@ class LSTMbyHand(L.LightningModule):
         updated_long_memory = ((long_memory * long_remember_percent) + (potential_remember_percent * potential_memory))
         
         # Output Gate: Makes New Short Term Memory and Determines How Much To Remember
-        output_percent = torch.sigmoid((short_memory * self.wo1) + (input_value * slice.wo2) + self.bo1)
+        output_percent = torch.sigmoid((short_memory * self.wo1) + (input_value * self.wo2) + self.bo1)
         updated_short_memory =  torch.tanh(updated_long_memory) * output_percent
 
         return ([updated_long_memory, updated_short_memory])
@@ -66,4 +66,7 @@ class LSTMbyHand(L.LightningModule):
     def training_step(self, batch, batch_idx):
         input_i, label_i = batch
         output_i =  self.forward(input_i[0])
-        pass
+        loss = (output_i - label_i)**2 # Sum of Squared Residuals
+        self.log("train_loss", loss)
+
+        return loss
