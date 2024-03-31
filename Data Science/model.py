@@ -3,11 +3,6 @@ from torch.optim import Adam
 import lightning as L
 import torch
 
-input_dim = 1
-hidden_dim = 16
-num_layers = 2 
-output_dim = 1
-
 class LSTM(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_layers, output_dim):
         super(LSTM, self).__init__()

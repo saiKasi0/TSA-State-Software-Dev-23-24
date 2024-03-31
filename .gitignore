@@ -1,5 +1,5 @@
 # misc
 .DS_Store
 .vscode/
-
+.idea/
 Data Science/lightning_logs/
