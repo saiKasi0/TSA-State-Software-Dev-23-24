@@ -4,7 +4,7 @@ import lightning as L
 import torch
 
 input_dim = 1
-hidden_dim = 32
+hidden_dim = 16
 num_layers = 2 
 output_dim = 1
 
